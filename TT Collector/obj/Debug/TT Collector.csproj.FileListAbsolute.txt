@@ -1,0 +1,16 @@
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\TT Collector.csprojResolveAssemblyReference.cache
+D:\ASP\project\TT Collector\TT Collector\bin\Debug\TT Collector.dll
+D:\ASP\project\TT Collector\TT Collector\bin\Debug\TT Collector.pdb
+D:\ASP\project\TT Collector\TT Collector\bin\Debug\TT_Collector.TT_Collector.apk
+D:\ASP\project\TT Collector\TT Collector\bin\Debug\TT_Collector.TT_Collector-Signed.apk
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\TT Collector.dll
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\TT Collector.pdb
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\android\bin\TT_Collector.TT_Collector.apk
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\res\layout\main.xml
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\res\values\strings.xml
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\res\drawable\icon.png
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\R.cs.flag
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\uploadflags.txt
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\res\layout\modelist.xml
+D:\ASP\project\TT Collector\TT Collector\bin\Debug\Newtonsoft.Json.dll
+D:\ASP\project\TT Collector\TT Collector\bin\Debug\Newtonsoft.Json.xml

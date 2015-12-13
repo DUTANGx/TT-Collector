@@ -1,0 +1,9 @@
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\assemblies\TT Collector.dll
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\assemblies\Mono.Android.dll
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\assemblies\mscorlib.dll
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\assemblies\Newtonsoft.Json.dll
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\assemblies\System.Core.dll
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\assemblies\System.dll
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\assemblies\System.Xml.dll
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\assemblies\System.Xml.Linq.dll
+D:\ASP\project\TT Collector\TT Collector\obj\Debug\assemblies\System.Runtime.Serialization.dll
