@@ -1,7 +1,10 @@
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Android.Hardware;
 using Android.App;
 using Android.Content;
@@ -9,8 +12,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace TT_Collector
 {
@@ -25,7 +26,41 @@ namespace TT_Collector
         private Button StartButton;
         private Button StopButton;
         private static readonly object _syncLock = new object();
+
+        //function
+        /*private void saveFile() {
+            var folder = Android.OS.Environment.ExternalStorageDirectory + Java.IO.File.Separator + "TTdata";
+            var filename = folder +
+                              Java.IO.File.Separator +
+                              "aa" + ".json";
+
+            try
+            {
+                if (!Directory.Exists(folder))
+                    Directory.CreateDirectory(folder);
+                using (var fs = new FileStream(filename, FileMode.OpenOrCreate))
+                {
+                    byte[] byteFile = Encoding.UTF8.GetBytes(builder.ToString());
+                    //参数：要写入到文件的数据数组，从数组的第几个开始写，一共写多少个字节
+                    fs.Write(byteFile, 0, byteFile.Length);
+                }
+            }
+            catch
+            {
+                RunOnUiThread(() =>
+                {
+                    var builders = new AlertDialog.Builder(this);
+                    builders.SetMessage("Saving image went wrong");
+                    builders.SetTitle("Unable to save image");
+                    builders.Show();
+                });
+            }
+        }*/
+
+
+
         //variables
+        string sas = "https://ucltt.blob.core.windows.net/collector/?sv=2015-04-05&sr=c&sig=E3KK%2BaWJVw8vemkDM8%2BsV9n7K5SLdgstXX1RuSTvBsc%3D&st=2015-12-14T11%3A30%3A06Z&se=2016-06-14T10%3A30%3A06Z&sp=rwdl";
         StringBuilder builder = new StringBuilder();
         DateTime starttime;
         DateTime stoptime;
@@ -36,7 +71,7 @@ namespace TT_Collector
         double[] reading = new double[4];
         //max[0]is max for resultant, [1] for x,[2] for y, [3]for z; same as min,avg,sum，reading
         int count = -1;
-        string[] items = { "Car", "Bus", "Train", "Walk", "Bike", "Cancel" };
+        string[] items = { "Car", "Bus", "Train", "Metro", "Walk", "Bike", "Cancel" };
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -60,11 +95,12 @@ namespace TT_Collector
                 //sensor activate
                 _sensorManager.RegisterListener(this, _sensorManager.GetDefaultSensor(SensorType.Accelerometer), SensorDelay.Ui);
             };
-            base.OnResume();
             StopButton.Click += (object sender, EventArgs e) =>
             {
                 //sensor close
                 _sensorManager.UnregisterListener(this);
+                StartButton.Enabled = true;
+                StopButton.Enabled = false;
                 stoptime = DateTime.Now;
                 builder.Length--;
                 builder.Append("],");
@@ -73,9 +109,8 @@ namespace TT_Collector
                 callDialog.SetTitle("choose mode of transportation");
                 callDialog.SetItems(items, this);
                 callDialog.Show();
-                StartButton.Enabled = true;
-                StopButton.Enabled = false;
             };
+
         }
         //ready to start
         protected override void OnStart()
@@ -92,7 +127,7 @@ namespace TT_Collector
         protected override void OnPause()
         {
             base.OnPause();
-            _sensorManager.UnregisterListener(this);
+            //_sensorManager.UnregisterListener(this);
         }
 
         public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy)
@@ -124,9 +159,6 @@ namespace TT_Collector
                 }
                 if (count == 90)
                 {
-                    /*_sensorTextView_x.Text = "x:" + max[1].ToString();
-                    _sensorTextView_y.Text = "y:" + max[2].ToString();
-                    _sensorTextView_z.Text = "z:" + max[3].ToString();*/
                     //calculate resultant acceleration
                     max[0] = Math.Sqrt(max[0]);
                     min[0] = Math.Sqrt(min[0]);
@@ -137,18 +169,18 @@ namespace TT_Collector
                         avg[i] = sum[i] / 90;
                     }
                     //write json
-                    builder.Append("{\"max_resultant\":\"" + max[0].ToString() + "\",")
-                           .Append("\"min_resultant\":\"" + min[0].ToString() + "\",")
-                           .Append("\"avg_resultant\":\"" + avg[0].ToString() + "\",")
-                           .Append("\"max_x\":\"" + max[1].ToString() + "\",")
-                           .Append("\"min_x\":\"" + min[1].ToString() + "\",")
-                           .Append("\"avg_x\":\"" + avg[1].ToString() + "\",")
-                           .Append("\"max_y\":\"" + max[2].ToString() + "\",")
-                           .Append("\"min_y\":\"" + min[2].ToString() + "\",")
-                           .Append("\"avg_y\":\"" + avg[2].ToString() + "\",")
-                           .Append("\"max_z\":\"" + max[3].ToString() + "\",")
-                           .Append("\"min_z\":\"" + min[3].ToString() + "\",")
-                           .Append("\"avg_z\":\"" + avg[3].ToString() + "\"},");
+                    builder.Append("{\"max_resultant\":" + max[0].ToString() + ",")
+                           .Append("\"min_resultant\":" + min[0].ToString() + ",")
+                           .Append("\"avg_resultant\":" + avg[0].ToString() + ",")
+                           .Append("\"max_x\":" + max[1].ToString() + ",")
+                           .Append("\"min_x\":" + min[1].ToString() + ",")
+                           .Append("\"avg_x\":" + avg[1].ToString() + ",")
+                           .Append("\"max_y\":" + max[2].ToString() + ",")
+                           .Append("\"min_y\":" + min[2].ToString() + ",")
+                           .Append("\"avg_y\":" + avg[2].ToString() + ",")
+                           .Append("\"max_z\":" + max[3].ToString() + ",")
+                           .Append("\"min_z\":" + min[3].ToString() + ",")
+                           .Append("\"avg_z\":" + avg[3].ToString() + "},");
                     //renew max min sum
                     for (i = 0; i < 4; i++)
                     {
@@ -167,38 +199,73 @@ namespace TT_Collector
                 count++;
             }
         }
-
-        public void OnClick(IDialogInterface dialog, int which)
+        public async void OnClick(IDialogInterface dialog, int which)
         {
             switch (which)
             {
                 case 0:
-                    builder.Append("\"Mode\":\"Car\"}");
-                    JObject obj = JObject.Parse(builder.ToString());
-                    StringBuilder x = new StringBuilder();
-                    foreach (var kvp in obj)
-                        x.AppendLine(kvp.Key + " = " + kvp.Value);
-
-                    this._sensorTextView_x.Text = x.ToString();
+                    builder.Append("\"Mode\":\"Car\"}");              
+                    await UseContainerSAS(sas,"Car",builder.ToString());
+                    builder.Length = 0;
                     break;
                 case 1:
                     builder.Append("\"Mode\":\"Bus\"}");
-                    System.Console.WriteLine("bus");
+                    await UseContainerSAS(sas, "Bus", builder.ToString());
+                    builder.Length = 0;
                     break;
                 case 2:
                     builder.Append("\"Mode\":\"Train\"}");
-                    System.Console.WriteLine("train");
+                    await UseContainerSAS(sas, "Train", builder.ToString());
+                    builder.Length = 0;
                     break;
                 case 3:
-                    builder.Append("\"Mode\":\"Walk\"}");
-                    System.Console.WriteLine("walk");
+                    builder.Append("\"Mode\":\"Metro\"}");
+                    await UseContainerSAS(sas, "Metro", builder.ToString());
+                    builder.Length = 0;
                     break;
                 case 4:
-                    builder.Append("\"Mode\":\"Bike\"}");
-                    System.Console.WriteLine("bike");
+                    builder.Append("\"Mode\":\"Walk\"}");
+                    await UseContainerSAS(sas, "Walk", builder.ToString());
+                    builder.Length = 0;
                     break;
                 case 5:
+                    builder.Append("\"Mode\":\"Bike\"}");
+                    await UseContainerSAS(sas, "Bike", builder.ToString());
+                    builder.Length = 0;
                     break;
+                case 6:
+                    builder.Length = 0;
+                    break;
+            }
+        }
+        static async Task UseContainerSAS(string sas, string mode, string json)
+        {
+            //Try performing container operations with the SAS provided.
+
+            //break a reference to the container using the SAS URI.
+            CloudBlobContainer container = new CloudBlobContainer(new Uri(sas));
+            string date = DateTime.Now.ToString();
+            try
+            {
+                //Write operation: write a new blob to the container.
+                CloudBlockBlob blob = container.GetBlockBlobReference(mode + date + ".json");
+
+                string blobContent = json;
+                MemoryStream msWrite = new
+                MemoryStream(Encoding.UTF8.GetBytes(blobContent));
+                msWrite.Position = 0;
+                using (msWrite)
+                {
+                    await blob.UploadFromStreamAsync(msWrite);
+                }
+                Console.WriteLine("Write operation succeeded for SAS " + sas);
+                Console.WriteLine();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Write operation failed for SAS " + sas);
+                Console.WriteLine("Additional error information: " + e.Message);
+                Console.WriteLine();
             }
         }
     }

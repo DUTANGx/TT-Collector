@@ -9,14 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/title"
-        android:paddingBottom="10dp" />
+        android:paddingBottom="30dp" />
     <TextView
         android:text="Accelerometer Readings"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/pagestart"
-        android:paddingBottom="10dp" />
+        android:paddingBottom="5dp" />
     <TextView
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/accelerometer_text_x"
@@ -36,16 +36,20 @@
         android:id="@+id/accelerometer_text_z"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
+        android:paddingBottom="30dp"
         android:text="z" />
     <Button
         android:text="Start Tracking"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/Start" />
+        android:id="@+id/Start"
+        android:backgroundTint="#000000ff"
+        android:backgroundTintMode="src_atop"
+        android:background="@android:color/holo_blue_light" />
     <Button
         android:text="Stop Tracking"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/Stop" />
+        android:id="@+id/Stop"
+        android:background="@android:color/holo_red_light" />
 </LinearLayout>
